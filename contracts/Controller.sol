@@ -5,15 +5,18 @@ import "./ChristCoin.sol";
 import "./Ledger.sol";
 import "./Shared.sol";
 
+/** @title Controller for the Christ Coin Token */
 contract Controller is Shared {
   using SafeMath for uint;
 
+  // Determines whether init() has been called
   bool public initialized;
 
   ChristCoin public token;
   Ledger public ledger;
   address public crowdsale;
 
+  // Vesting details for the amount to be locked away after crowdsale is complete
   uint public vestingAmount;
   uint public vestingPaid;
   uint public vestingStart;
@@ -52,16 +55,18 @@ contract Controller is Shared {
     _;
   }
 
+  // Modifier to ensure the vesting wallet cannot transfer tokens
   modifier notVesting() {
     require(msg.sender != LIFE_CHANGE_VESTING_WALLET);
     _;
   }
 
+  // Mints the initial 10 billion tokens to the platform, crowdsale, and founder wallets
   function init() onlyOwner {
     require(!initialized);
-    mintWithEvent(REWARDS_WALLET, 9 * (10 ** (9 + DECIMALS))); // 9 billion
-    mintWithEvent(CROWDSALE_WALLET, 900 * (10 ** (6 + DECIMALS))); // 375 million
-    mintWithEvent(LIFE_CHANGE_WALLET, 100 * (10 ** (6 + DECIMALS))); // 100 million
+    mintWithEvent(REWARDS_WALLET, 9 * (10 ** (9 + DECIMALS)));        // 9 billion tokens
+    mintWithEvent(CROWDSALE_WALLET, 900 * (10 ** (6 + DECIMALS)));    // 375 million tokens
+    mintWithEvent(LIFE_CHANGE_WALLET, 100 * (10 ** (6 + DECIMALS)));  // 100 million tokens
     initialized = true;
   }
 
@@ -81,6 +86,8 @@ contract Controller is Shared {
     return ledger.transfer(_from, _to, _value);
   }
 
+  // Allows the crowdsale to transfer tokens from one address to another address
+  // Calls the Transfer event on the token contract to comply with the ERC20 standard
   function transferWithEvent(address _from, address _to, uint _value) onlyCrowdsale returns (bool success) {
     success = ledger.transfer(_from, _to, _value);
     if (success) {
@@ -100,6 +107,8 @@ contract Controller is Shared {
     return ledger.burn(_owner, _amount);
   }
 
+  // Allows init() to mint the initial token balances
+  // Calls the Transfer event on the token contract to comply with the ERC20 standard
   function mintWithEvent(address _to, uint _amount) internal returns (bool success) {
     success = ledger.mint(_to, _amount);
     if (success) {
@@ -107,6 +116,7 @@ contract Controller is Shared {
     }
   }
 
+  // Allows crowdsale contract to begin vesting an amount for a duration
   function startVesting(uint _amount, uint _duration) onlyCrowdsale {
     require(vestingAmount == 0);
     vestingAmount = _amount;
@@ -115,6 +125,9 @@ contract Controller is Shared {
     vestingDuration = _duration;
   }
 
+  // Allows the vesting wallet to withdraw unlocked tokens to another wallet
+  // Determines the rate per second of tokens to unlock and transfers that minus tokens already paid
+  // Calls the Transfer event on the token contract to comply with the ERC20 standard
   function withdrawVested(address _withdrawTo) returns (uint amountWithdrawn) {
     require(msg.sender == LIFE_CHANGE_VESTING_WALLET);
     require(vestingAmount > 0);

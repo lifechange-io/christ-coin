@@ -4,6 +4,7 @@ import "./Zeppelin/SafeMath.sol";
 import "./Controller.sol";
 import "./Shared.sol";
 
+/** @title Christ Coin Token */
 contract ChristCoin is Shared {
   using SafeMath for uint;
 
@@ -65,10 +66,12 @@ contract ChristCoin is Shared {
     }
   }
 
+  // Allows controller to call Transfer event when minting or transferring crowdsale tokens
   function controllerTransfer(address _from, address _to, uint _value) onlyController {
     Transfer(_from, _to, _value);
   }
 
+  // Allows controller to call Approval in the future if needed
   function controllerApproval(address _from, address _spender, uint _value) onlyController {
     Approval(_from, _spender, _value);
   }

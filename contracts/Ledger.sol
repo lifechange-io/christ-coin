@@ -3,6 +3,7 @@ pragma solidity ^0.4.11;
 import "./Zeppelin/SafeMath.sol";
 import "./Shared.sol";
 
+/** @title Ledger for the Christ Coin Token */
 contract Ledger is Shared {
   using SafeMath for uint;
 
