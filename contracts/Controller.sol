@@ -1,12 +1,13 @@
 pragma solidity ^0.4.11;
 
 import "./Zeppelin/SafeMath.sol";
+import "./Zeppelin/Pausable.sol";
 import "./ChristCoin.sol";
 import "./Ledger.sol";
 import "./Shared.sol";
 
 /** @title Controller for the Christ Coin Token */
-contract Controller is Shared {
+contract Controller is Shared, Pausable {
   using SafeMath for uint;
 
   // Determines whether init() has been called
@@ -82,7 +83,7 @@ contract Controller is Shared {
     return ledger.allowance(_owner, _spender);
   }
 
-  function transfer(address _from, address _to, uint _value) onlyToken notVesting returns (bool success) {
+  function transfer(address _from, address _to, uint _value) onlyToken notVesting whenNotPaused returns (bool success) {
     return ledger.transfer(_from, _to, _value);
   }
 
@@ -95,15 +96,15 @@ contract Controller is Shared {
     }
   }
 
-  function transferFrom(address _spender, address _from, address _to, uint _value) onlyToken notVesting returns (bool success) {
+  function transferFrom(address _spender, address _from, address _to, uint _value) onlyToken notVesting whenNotPaused returns (bool success) {
     return ledger.transferFrom(_spender, _from, _to, _value);
   }
 
-  function approve(address _owner, address _spender, uint _value) onlyToken notVesting returns (bool success) {
+  function approve(address _owner, address _spender, uint _value) onlyToken notVesting whenNotPaused returns (bool success) {
     return ledger.approve(_owner, _spender, _value);
   }
 
-  function burn(address _owner, uint _amount) onlyToken returns (bool success) {
+  function burn(address _owner, uint _amount) onlyToken whenNotPaused returns (bool success) {
     return ledger.burn(_owner, _amount);
   }
 

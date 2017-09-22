@@ -1,11 +1,12 @@
 pragma solidity ^0.4.11;
 
 import "./Zeppelin/SafeMath.sol";
+import "./Zeppelin/Pausable.sol";
 import "./Controller.sol";
 import "./Shared.sol";
 
 /** @title Crowdsale for the Christ Coin Token */
-contract Crowdsale is Shared {
+contract Crowdsale is Shared, Pausable {
   using SafeMath for uint;
 
   uint public constant START = 1475391600;                  // October 2, 2016 7:00:00 AM GMT (Will change to 2017)
@@ -58,12 +59,12 @@ contract Crowdsale is Shared {
     controller = Controller(_address);
   }
 
-  function () payable {
+  function () payable whenNotPaused {
     buyTokens(msg.sender);
   }
 
   // Method separated to allow for gifting of tokens
-  function buyTokens(address _beneficiary) payable {
+  function buyTokens(address _beneficiary) payable whenNotPaused {
     require(_beneficiary != 0x0);
     require(validPurchase());
 
