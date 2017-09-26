@@ -9,8 +9,8 @@ import "./Shared.sol";
 contract Crowdsale is Shared, Pausable {
   using SafeMath for uint;
 
-  uint public constant START = 1475391600;                  // October 2, 2016 7:00:00 AM GMT (Will change to 2017)
-  uint public constant END = 1511766000;                    // November 27, 2017 7:00:00 AM GMT
+  uint public constant START = 1506945600;                  // October 2, 2017 7:00:00 AM CST
+  uint public constant END = 1512133200;                    // December 1, 2017 7:00:00 AM CST
   uint public constant CAP = 450 * (10 ** (6 + DECIMALS));  // 450 million tokens
   
   uint public weiRaised;                                    // Total wei amount raised
@@ -47,10 +47,10 @@ contract Crowdsale is Shared, Pausable {
   function Crowdsale() {
     require(END >= START);
 
-    rounds.push(Round(0, 75 * (10 ** (6 + DECIMALS)), 33333333333333, 4));    // Up to 75 million tokens, 25% bonus
-    rounds.push(Round(1, 150 * (10 ** (6 + DECIMALS)), 1 * (10 ** 14), 10));  // Up to 150 million tokens, 10% bonus
-    rounds.push(Round(2, 250 * (10 ** (6 + DECIMALS)), 2 * (10 ** 14), 0));   // Up to 250 million tokens, 0% bonus
-    rounds.push(Round(3, 450 * (10 ** (6 + DECIMALS)), 3 * (10 ** 14), 0));   // Up to 450 million tokens, 0% bonus
+    rounds.push(Round(0, 75 * (10 ** (6 + DECIMALS)), 35460992907801, 4));    // Up to 75 million tokens, 25% bonus
+    rounds.push(Round(1, 150 * (10 ** (6 + DECIMALS)), 106382978723404, 10)); // Up to 150 million tokens, 10% bonus
+    rounds.push(Round(2, 250 * (10 ** (6 + DECIMALS)), 212765957446808, 0));  // Up to 250 million tokens, 0% bonus
+    rounds.push(Round(3, 450 * (10 ** (6 + DECIMALS)), 319148936170213, 0));  // Up to 450 million tokens, 0% bonus
     currentRound = rounds[0];
   }
 

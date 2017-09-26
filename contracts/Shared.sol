@@ -6,8 +6,8 @@ import "./Finalizable.sol";
 contract Shared is Ownable, Finalizable {
   uint internal constant DECIMALS = 8;
   
-  address internal constant REWARDS_WALLET = 0x0A3Aa122b2Ab355DAc2413b52366db64CA7c0261;
-  address internal constant CROWDSALE_WALLET = 0x86d9f2E47Db4309ffcCa5E2EB26155e24BDC749f;
-  address internal constant LIFE_CHANGE_WALLET = 0x57337eecA46fc08FAcddB773b7044361334753ee;
-  address internal constant LIFE_CHANGE_VESTING_WALLET = 0xAB86E25A362c0681767D2a4630Bffc369a29aC20;
+  address internal constant REWARDS_WALLET = 0x30b002d3AfCb7F9382394f7c803faFBb500872D8;
+  address internal constant CROWDSALE_WALLET = 0x028e1Ce69E379b1678278640c7387ecc40DAa895;
+  address internal constant LIFE_CHANGE_WALLET = 0xEe4284f98D0568c7f65688f18A2F74354E17B31a;
+  address internal constant LIFE_CHANGE_VESTING_WALLET = 0x2D354bD67707223C9aC0232cd0E54f22b03483Cf;
 }
