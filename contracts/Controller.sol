@@ -66,7 +66,7 @@ contract Controller is Shared, Pausable {
   function init() onlyOwner {
     require(!initialized);
     mintWithEvent(REWARDS_WALLET, 9 * (10 ** (9 + DECIMALS)));        // 9 billion tokens
-    mintWithEvent(CROWDSALE_WALLET, 900 * (10 ** (6 + DECIMALS)));    // 375 million tokens
+    mintWithEvent(CROWDSALE_WALLET, 900 * (10 ** (6 + DECIMALS)));    // 900 million tokens
     mintWithEvent(LIFE_CHANGE_WALLET, 100 * (10 ** (6 + DECIMALS)));  // 100 million tokens
     initialized = true;
   }
@@ -136,6 +136,16 @@ contract Controller is Shared, Pausable {
     uint _elapsed = now.sub(vestingStart);
     uint _rate = vestingAmount.div(vestingDuration);
     uint _unlocked = _rate.mul(_elapsed);
+
+    if (_unlocked > vestingAmount) {
+       _unlocked = vestingAmount;
+    }
+
+    if (_unlocked <= vestingPaid) {
+      amountWithdrawn = 0;
+      return;
+    }
+
     amountWithdrawn = _unlocked.sub(vestingPaid);
     vestingPaid = vestingPaid.add(amountWithdrawn);
 
