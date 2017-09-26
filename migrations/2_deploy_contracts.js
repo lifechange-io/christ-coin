@@ -23,6 +23,5 @@ module.exports = function(deployer) {
         return cs.setController(Controller.address) 
       })
     ]))
-    .then(() => Controller.deployed().then(c => c.init()))
-    .then(() => crowdsale.fundPresale());
+    .then(() => Controller.deployed().then(c => c.init()));
 };

@@ -19,10 +19,9 @@ contract Crowdsale is Shared, Pausable {
   uint public presaleTokensDistributed;                     // Presale tokens distributed (for informational purposes)
   uint public presaleBonusTokensDistributed;                // Presale bonus tokens distributed (for informational purposes)
   bool public crowdsaleFinalized;                           // Flag for if the crowdsale has been finalized or not
-  bool public presaleFunded;                                // Ensures the presale is only funded once
+  bool public presaleFinalized;                             // Ensures the presale is only funded once
 
   Controller public controller;
-  Presale[] presales;
   Round[] public rounds;
   Round public currentRound;
 
@@ -125,7 +124,7 @@ contract Crowdsale is Shared, Pausable {
     bool nonZeroPurchase = msg.value != 0;
     bool withinPeriod = now >= START && now <= END;
 
-    return notAtCap && nonZeroPurchase && withinPeriod;
+    return notAtCap && nonZeroPurchase && withinPeriod && presaleFinalized;
   }
 
   // Determines if the crowdsale is over
@@ -133,23 +132,26 @@ contract Crowdsale is Shared, Pausable {
     return crowdsaleFinalized || tokensDistributed == CAP || now > END;
   }
 
-  // Presale is funded in migrations
-  // These addresses will be hard-coded before publishing
-  function fundPresale() onlyOwner {
-    require(!presaleFunded);
+  // Allows the owner to add a presale
+  function addPresale(address _beneficiary, uint _weiAmount) onlyOwner returns (bool) {
+    require(!presaleFinalized);
+    require(_beneficiary != 0x0);
+    require(_weiAmount != 0);
+    
+    Purchase memory purchase = processPurchase(0x0, _beneficiary, _weiAmount);
+    presaleTokensDistributed = presaleTokensDistributed.add(purchase.tokens);
+    presaleBonusTokensDistributed = presaleBonusTokensDistributed.add(purchase.bonus);
+ 
+    return true;
+  }
 
-    presales.push(Presale(0xEc8CDf09eF13f48a95ED6E7d260ebfF2a8E6a232, 13 * (10 ** 18))); // 13 Ether
-    presales.push(Presale(0xdD0BF270a36d0BF41E9f8ECAe08fEe14999a0693, 20 * (10 ** 18))); // 20 Ether
-
-    for (uint i = 0; i < presales.length; i++) {
-      Purchase memory purchase = processPurchase(0x0, presales[i].purchaser, presales[i].weiAmount);
-      presaleTokensDistributed = presaleTokensDistributed.add(purchase.tokens);
-      presaleBonusTokensDistributed = presaleBonusTokensDistributed.add(purchase.bonus);
-    }
+  // Do not allow any more presales, advance current round to round 1
+  function finalizePresale() onlyOwner {
+    require(!presaleFinalized);
 
     // Crowdsale starts in first round
     currentRound = rounds[1];
-    presaleFunded = true;
+    presaleFinalized = true;
   }
 
   // Owner can only finalize crowdsale once the cap is met or time expires
